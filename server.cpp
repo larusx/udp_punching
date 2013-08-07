@@ -3,6 +3,7 @@
 #include<boost/bind.hpp>
 #include<vector>
 #include<string>
+#include<iostream>
 using namespace boost;
 using namespace boost::asio;
 using namespace boost::asio::ip;
@@ -11,9 +12,9 @@ class server{
 public:
   server(io_service &ios):_ios(ios),
     sep(udp::v4(),SERVER_PORT),sock(ios,sep){
-    sock.async_receive_from(buffer(data,length),cep,
-      boost::bind(&server::handle_receive_from,this,placeholders::error,
-      placeholders::bytes_transferred));
+      sock.async_receive_from(buffer(data,length),cep,
+        boost::bind(&server::handle_receive_from,this,placeholders::error,
+        placeholders::bytes_transferred));
   }
   //添加连接客户端
   void add_client(udp::endpoint ep){
@@ -33,19 +34,19 @@ public:
         break;
       case 2:
         p2p_addr=nep.front().address().to_string();
-				if(p2p_addr == cep.address().to_string())
-					p2p_addr=nep.back().address().to_string();
+        if(p2p_addr == cep.address().to_string())
+          p2p_addr=nep.back().address().to_string();
         sock.send_to(buffer(p2p_addr),cep);
-				std::cout<<p2p_addr<<std::endl;
-				std::cout<<"发送给"<<cep.address()<<std::endl;
+        std::cout<<p2p_addr<<std::endl;
+        std::cout<<"发送给"<<cep.address()<<std::endl;
         break;
       default:
         break;
       } 
     }
-		sock.async_receive_from(buffer(data,length),cep,
-			boost::bind(&server::handle_receive_from,this,placeholders::error,
-			placeholders::bytes_transferred));
+    sock.async_receive_from(buffer(data,length),cep,
+      boost::bind(&server::handle_receive_from,this,placeholders::error,
+      placeholders::bytes_transferred));
   }
 private:
   io_service &_ios;
@@ -70,7 +71,7 @@ int main()
   }
   catch (std::exception& e)
   {
-  	std::cout<<e.what()<<std::endl;
+    std::cout<<e.what()<<std::endl;
   }
-	return 0; 
+  return 0; 
 }
