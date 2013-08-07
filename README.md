@@ -1,4 +1,7 @@
-udp_punching
-============
+#udp punching
 
-to test udp_punching
+* use boost::asio
+* just a demo
+
+##TODO
+* p2p & IM
