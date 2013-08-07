@@ -1,4 +1,4 @@
-//udpæ‰“æ´æ¼”ç¤ºï¼Œè‡ªåŠ¨ç™»é™†æœåŠ¡å™¨
+//udp´ò¶´ÑİÊ¾£¬×Ô¶¯µÇÂ½·şÎñÆ÷
 #include<boost/asio.hpp>
 #include<boost/thread.hpp>
 #include<iostream>
@@ -8,25 +8,25 @@ using namespace boost::asio;
 using namespace boost::asio::ip;
 #define SERVER_IP "192.168.0.38"
 #define SERVER_PORT 10000
-//P2Påœ°å€
+//P2PµØÖ·
 udp::endpoint p2p_cep;
-//ç­‰å¾…æœåŠ¡å™¨å‘é€æ‰“æ´ä¿¡æ¯
-void punching(udp::socket &cssock/*ä¸æœåŠ¡ç«¯çš„sock*/,udp::socket &ccsock/*P2Pé€šä¿¡çš„sock*/)
+//µÈ´ı·şÎñÆ÷·¢ËÍ´ò¶´ĞÅÏ¢
+void punching(udp::socket &cssock/*Óë·şÎñ¶ËµÄsock*/,udp::socket &ccsock/*P2PÍ¨ĞÅµÄsock*/)
 {
-  //ç­‰å¾…æœåŠ¡å™¨å‘æ¥P2På¯¹ç«¯åœ°å€
+  //µÈ´ı·şÎñÆ÷·¢À´P2P¶Ô¶ËµØÖ·
   char addr[20]={0};
-  //æ¥æ”¶p2pæ•°æ®
+  //½ÓÊÕp2pÊı¾İ
   char p2p_buf[100];
-  //ä»æœåŠ¡å™¨æ¥æ”¶
+  //´Ó·şÎñÆ÷½ÓÊÕ
   udp::endpoint sep;
   cssock.receive_from(buffer(addr),sep);
-  //æ¥æ”¶åˆ°æ‰“æ´ä¿¡æ¯
-  //è¿œç«¯å®¢æˆ·åœ°å€
+  //½ÓÊÕµ½´ò¶´ĞÅÏ¢
+  //Ô¶¶Ë¿Í»§µØÖ·
   udp::endpoint cep(address::from_string(addr),9999);
   p2p_cep=cep;
-  //æ‰“æ´ä¿¡æ¯ï¼Œå¿…å®šè¢«å¯¹æ–¹NATæ‹¦æˆª
+  //´ò¶´ĞÅÏ¢£¬±Ø¶¨±»¶Ô·½NATÀ¹½Ø
   ccsock.send_to(buffer(addr),cep);
-  std::cout<<"æ‰“æ´ç»“æŸï¼Œå¼€å§‹æ¥æ”¶P2Pæ•°æ®"<<std::endl;
+  std::cout<<"´ò¶´½áÊø£¬¿ªÊ¼½ÓÊÕP2PÊı¾İ"<<std::endl;
   while (1)
   {
     ccsock.receive_from(buffer(p2p_buf),cep);
@@ -38,45 +38,46 @@ int main()
 {
   std::cout<<"udp server start."<<std::endl;
   io_service ios;
-  //cssockå®¢æˆ·ä¸æœåŠ¡å™¨é€šä¿¡
+  //cssock¿Í»§Óë·şÎñÆ÷Í¨ĞÅ
   udp::socket cssock(ios,udp::endpoint(udp::v4(),8888));
-  //ccsockå®¢æˆ·ä¹‹é—´P2Pé€šä¿¡
+  //ccsock¿Í»§Ö®¼äP2PÍ¨ĞÅ
   udp::socket ccsock(ios,udp::endpoint(udp::v4(),9999));
-  //serveråœ°å€
+  //serverµØÖ·
   udp::endpoint sep(address::from_string(SERVER_IP),SERVER_PORT);
-  //P2Pé€šä¿¡çš„å¯¹ç«¯ç‚¹
+  //P2PÍ¨ĞÅµÄ¶Ô¶Ëµã
   udp::endpoint cep;
-  //é”™è¯¯ç 
+  //´íÎóÂë
   system::error_code ec;
-  //å®¢æˆ·ä¸æœåŠ¡å™¨é€šä¿¡ç¼“å†²åŒº
-  //1ä¸ºç™»é™†ï¼Œ0ä¸ºä¸‹çº¿ï¼Œ2ä¸ºè¯·æ±‚æ‰“æ´
+  //¿Í»§Óë·şÎñÆ÷Í¨ĞÅ»º³åÇø
+  //1ÎªµÇÂ½£¬0ÎªÏÂÏß£¬2ÎªÇëÇó´ò¶´
   char cs_buf[1];
-  //å‘é€ä¿¡æ¯
+  //·¢ËÍĞÅÏ¢
   char send_buf[100];
-  //è‡ªåŠ¨ç™»é™†
+  //×Ô¶¯µÇÂ½
   try{
   while(1)
   {
-    std::cout<<"ç™»å½•ä¸­ã€‚ã€‚ã€‚"<<std::endl;
+    std::cout<<"µÇÂ¼ÖĞ¡£¡£¡£"<<std::endl;
     cs_buf[0]=1;
-    cssock.send_to(buffer(cs_buf),sep);
+    cssock.send_to(buffer(cs_buf,1),sep);
     cssock.receive_from(buffer(cs_buf),sep);
-    //serverè¿”å›0è¡¨ç¤ºç™»é™†æˆåŠŸ
+    //server·µ»Ø0±íÊ¾µÇÂ½³É¹¦
     if(cs_buf[0] == 0)
       break;
   }
-  std::cout<<"ç™»é™†æˆåŠŸ!"<<std::endl;
+  std::cout<<"µÇÂ½³É¹¦!"<<std::endl;
   thread thread_punching(bind(punching,ref(cssock),ref(ccsock)));
   thread_punching.detach();
   while(1)
   {
-    std::cout<<"æŒ‰ä»»æ„é”®å¼€å§‹æ‰“æ´"<<std::endl;
+    std::cout<<"ºóÁ¬½Ó¿Í»§¶Ë°´ÈÎÒâ¼üÇëÇóµÚÒ»¸ö¿Í»§¶Ë´ò¶´"<<std::endl;
     getchar();
     cs_buf[0]=2;
-    cssock.send_to(buffer(cs_buf),sep);
+    cssock.send_to(buffer(cs_buf,1),sep);
     while(1)
     {
-      std::cout<<"è¾“å…¥å‘é€ä¿¡æ¯"<<std::endl;
+      
+      std::cout<<"ÊäÈë·¢ËÍĞÅÏ¢"<<std::endl;
       std::cin>>send_buf;
       ccsock.send_to(buffer(send_buf,100),p2p_cep);
     }
