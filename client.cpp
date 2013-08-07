@@ -14,7 +14,7 @@ udp::endpoint p2p_cep;
 void punching(udp::socket &cssock/*与服务端的sock*/,udp::socket &ccsock/*P2P通信的sock*/)
 {
   //等待服务器发来P2P对端地址
-  char addr[10]={0};
+  char addr[20]={0};
   //接收p2p数据
   char p2p_buf[100];
   //从服务器接收
