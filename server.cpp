@@ -38,7 +38,7 @@ public:
           p2p_addr=nep.back().address().to_string();
         sock.send_to(buffer(p2p_addr),cep);
         std::cout<<p2p_addr<<std::endl;
-        std::cout<<"发送给"<<cep.address()<<std::endl;
+        std::cout<<"发送给"<<cep.address()<<":"<<cep.port()<<std::endl;
         break;
       default:
         break;
