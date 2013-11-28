@@ -1,4 +1,4 @@
-#include "../binary_tree.h"
+#include "../base/binary_tree.h"
 void inorder_print(node_t* root)
 {
 	if(root != NULL)
@@ -24,11 +24,11 @@ int main()
 	delete_tree_node(tree, 4);
 	delete_tree_node(tree, 6);
 	delete_tree_node(tree, 10);
+	delete_tree_node(tree, 8);
+	delete_tree_node(tree, 3);
+	delete_tree_node(tree, 5);
+	delete_tree_node(tree, 7);
 	inorder_print(tree->root);
-	printf("\n");
-	ep = (endpoint_t*)malloc(sizeof(endpoint_t)); 
-	ep->fd = 1;
-	insert_tree(tree, ep);
-	inorder_print(tree->root);
+	free(tree);
 	printf("\n");
 }

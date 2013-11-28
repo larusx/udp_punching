@@ -40,7 +40,7 @@ void delete_tree_node(tree_node_t* tree, int fd)
 	int flag;/*0 means left,1 means right*/
 	if(((endpoint_t*)tree->root->data)->fd == fd) {
 		if(tree->root->left == tree->root->right) {
-			free_node(tree->root);tree->root=NULL;return;
+			free((endpoint_t*)tree->root->data);free_node(tree->root);tree->root=NULL;return;
 		}
 	}
 	else {
@@ -53,6 +53,7 @@ void delete_tree_node(tree_node_t* tree, int fd)
 				pre = cur;cur = cur->left;flag = 0;
 			}
 		}
+		free((endpoint_t*)cur->data);
 	}
 	while(cur != NULL) {
 		if( cur->right != NULL)
