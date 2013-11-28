@@ -1,6 +1,6 @@
-#include "punch.h"
+#include "../base/punch.h"
 
-#define BUFSIZE 100
+#define BUFSIZE 1024
 
 /* 
  * if success return 0, otherwise return 1
@@ -12,7 +12,7 @@ int login( endpoint_t* server )
 	char buf[BUFSIZE];
 	int nbytes = read( server->fd, buf, BUFSIZE );
 	buf[nbytes] = 0;
-	printf("%s\n",buf);
+	printf("%s",buf);
 	return 0;
 }
 
@@ -31,7 +31,7 @@ int main()
 		write( server->fd, sendbuf, nbytes );
 		nbytes = read ( server->fd, recvbuf, BUFSIZE );
 		recvbuf[nbytes] = 0;
-		printf("%s\n",recvbuf);
+		printf("%s",recvbuf);
 	}
 	free( server );
 	return 0;
