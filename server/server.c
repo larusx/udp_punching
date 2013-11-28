@@ -62,7 +62,7 @@ int main()
 	tree_node_t* accepted_fds_tree = create_tree();
 
 	/*we should free this by ourself*/
-	endpoint_t* server = get_udp_endpoint( NULL, 0 );
+	endpoint_t* server = get_udp_endpoint( NULL, 80 );
 	endpoint_t* client; 
 
 	if( server_init( server ) != 0 )
