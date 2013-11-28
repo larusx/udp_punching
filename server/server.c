@@ -1,5 +1,8 @@
-#include "pubch.h"
-#include "binary_tree.h"
+/*
+ * UDP punching server, serve as P2P
+ */
+#include "../base/punch.h"
+#include "../base/binary_tree.h"
 #include <sys/epoll.h>
 #include <fcntl.h>
 
@@ -28,10 +31,18 @@ int main()
 	int nfds; /*event number of ready for read or write*/
 	struct epoll_event ev;
 	struct epoll_event kev[EPOLL_NUM];
+
+	/*create a tree to manage the accepted_fds*/
+	tree_node* accepted_fds_tree = create_tree;
+
+	/*we should free this by ourself*/
 	endpoint_t* server = get_udp_endpoint( NULL, 0 );
 	endpoint_t* client = get_udp_endpoint( NULL, 0 );
+
 	if( server_init( server ) != 0 )
-		{free(server);return 1;}
+		{return 1;}
+
+	/*add listen_fd to epoll*/
 	ev.events = EPOLLIN;
 	ev.data.fd = server->fd;
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server->fd, &ep);
@@ -52,6 +63,7 @@ int main()
 				ev.events = EPOLLIN;
 				ev.data.fd = client->fd;
 				epoll_ctl(epoll_fd, EPOLL_CTL_ADD, client->fd, &ev);
+				insert_tree(accepted_fds_tree, client);
 			}
 			/*
 			 * something happen about read
