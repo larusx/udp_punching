@@ -54,6 +54,7 @@ int main()
 {
 	int epoll_fd = epoll_create( EPOLL_NUM );
 	int nfds; /*event number of ready for read or write*/
+	socklen_t accept_addrlen = sockaddrlen ;/*use for accept*/
 	struct epoll_event ev;
 	struct epoll_event kev[EPOLL_NUM];
 
@@ -84,7 +85,7 @@ int main()
 			 */
 			if( kev[i].data.fd == server->fd ) {
 				client = get_udp_endpoint( NULL, 0 );
-				client->fd = accept(server->fd, (struct sockaddr*)&client->addr, NULL);
+				client->fd = accept(server->fd, (struct sockaddr*)&client->addr, &accept_addrlen);
 				set_nonblocking(client->fd);
 				ev.events = EPOLLIN;
 				ev.data.fd = client->fd;
