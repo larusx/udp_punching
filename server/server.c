@@ -1,12 +1,15 @@
 /*
  * UDP punching server, serve as a P2P server
  */
+#include "../base/base.h"
 #include "../base/punch.h"
 #include "../base/binary_tree.h"
+#include "handle.h"
 #include <sys/epoll.h>
 #include <fcntl.h>
 
 #define EPOLL_NUM 1024
+#define BUFESIZE 1024
 
 typedef struct menu menu_t;
 struct menu{
@@ -34,7 +37,7 @@ int server_init( endpoint_t* server )
 	setsockopt( server->fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(int) );
 	if( bind( server->fd, (struct sockaddr*)&server->addr, sockaddrlen ) !=0 )
 		{perror("bind");return 1;}
-	listen( server->fd, 1024 );
+	listen( server->fd, EPOLL_NUM );
 	return 0;
 }
 /* 
@@ -42,7 +45,7 @@ int server_init( endpoint_t* server )
  */
 void welcome( endpoint_t* ep )
 {
-	char message[1024];
+	char message[BUFESIZE];
 	int nbytes = sprintf(message,"Welcome! Your ID is %d\n",ep->fd);
 	for( int i = 0; server_menu[i].number != 0; i++ )
 	{
@@ -94,10 +97,10 @@ int main()
 				welcome(client);
 			}
 			/*
-			 * something happen about read
+			 * something happen about read, tcp is used only between server and client
 			 */
 			else if( kev[i].events & EPOLLIN ){
-				//handle()
+				handle( kev[i].data.fd, accepted_fds_tree );
 			}
 
 		}

@@ -1,5 +1,6 @@
 #ifndef _BINARY_TREE
 #define _BINARY_TREE
+#include "base.h"
 #include <stdlib.h>
 #include "punch.h"
 typedef struct node node_t;
@@ -30,4 +31,6 @@ node_t* insert_node(node_t* root, endpoint_t* data);
 /*delete the node which has the fd in the tree*/
 void delete_tree_node(tree_node_t* root, int fd);
 
+/*inorder print the node to buf*/
+void inorder_print_tree_node( node_t* root, int* buf, int* nfds );
 #endif

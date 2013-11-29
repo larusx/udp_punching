@@ -64,3 +64,13 @@ void delete_tree_node(tree_node_t* tree, int fd)
 			{free_node(cur);if(flag == 0) pre->left = NULL; else pre->right = NULL;cur=NULL;}
 	}
 }
+void inorder_print_tree_node( node_t* root, int* buf , int* nfds)
+{
+	/* nfds should be zero init*/
+	if( root != NULL )
+	{
+		inorder_print_tree_node( root->left, buf, nfds);
+		buf[(*nfds)++] = ((endpoint_t*)root->data)->fd;
+		inorder_print_tree_node( root->right, buf, nfds);
+	}
+}
