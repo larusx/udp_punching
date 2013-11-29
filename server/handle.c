@@ -32,8 +32,9 @@ void return_error_option( int fd )
 void handle( int accepted_fd, tree_node_t* accepted_fds_tree )
 {
 	char recvbuf[BUFSIZE];
-	/*int nbytes = */
-	read( accepted_fd, recvbuf, BUFSIZE);
+	int nbytes = read( accepted_fd, recvbuf, BUFSIZE);
+	if ( nbytes == 0 )
+		
 	int option_number = recvbuf[0]-'0';
 	switch(option_number){
 		case 1:

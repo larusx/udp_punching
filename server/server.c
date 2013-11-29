@@ -100,7 +100,14 @@ int main()
 			 * something happen about read, tcp is used only between server and client
 			 */
 			else if( kev[i].events & EPOLLIN ){
-				handle( kev[i].data.fd, accepted_fds_tree );
+				if( handle( kev[i].data.fd, accepted_fds_tree ) != 0 )
+				{
+					int fd = kev[i].data.fd;
+					ev.data.fd = fd;
+					epoll_ctl( epoll_fd, EPOLL_CTL_DEL, fd, &ev );
+					close( fd );
+					delete_tree_node( accepted_fds_tree, fd );	
+				}
 			}
 
 		}
