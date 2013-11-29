@@ -18,7 +18,7 @@ int login( endpoint_t* server )
 
 int main()
 {
-	endpoint_t* server = get_udp_endpoint( "23.227.187.13", 80 );
+	endpoint_t* server = get_tcp_endpoint( "23.227.187.13", 80 );
 	char sendbuf[BUFSIZE];
 	char recvbuf[BUFSIZE];
 	int nbytes;

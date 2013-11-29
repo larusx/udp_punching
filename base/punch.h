@@ -11,6 +11,6 @@ struct endpoint{
 	struct sockaddr_in addr;
 };
 
-endpoint_t* get_udp_endpoint( const char* ip, int port );
+endpoint_t* get_tcp_endpoint( const char* ip, int port );
 
 #endif
