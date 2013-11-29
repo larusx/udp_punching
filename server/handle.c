@@ -33,6 +33,7 @@ int handle( int accepted_fd, tree_node_t* accepted_fds_tree )
 {
 	char recvbuf[BUFSIZE];
 	int nbytes = read( accepted_fd, recvbuf, BUFSIZE);
+	perror("read");
 	if ( nbytes == 0 )
 		return 1;/* remote is closed */	
 	int option_number = recvbuf[0]-'0';
