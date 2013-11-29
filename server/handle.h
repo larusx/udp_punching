@@ -4,7 +4,7 @@
 #include "../base/binary_tree.h"
 
 /* handle the tcp fd*/
-void handle( int accepted_fd, tree_node_t* accepted_fds_tree );
+int handle( int accepted_fd, tree_node_t* accepted_fds_tree );
 
 /* functions */
 void find_who_is_online( int fd, tree_node_t* accepted_fds_tree );
