@@ -65,7 +65,7 @@ int main()
 	tree_node_t* accepted_fds_tree = create_tree();
 
 	/*we should free this by ourself*/
-	endpoint_t* server = get_tcp_endpoint( NULL, 80 );
+	endpoint_t* server = get_endpoint( NULL, 80, TCP_ENDPOINT );
 	endpoint_t* client; 
 
 	if( server_init( server ) != 0 )
@@ -87,7 +87,7 @@ int main()
 			 * something happen in listen_fd
 			 */
 			if( kev[i].data.fd == server->fd ) {
-				client = get_tcp_endpoint( NULL, 0 );
+				client = get_endpoint( NULL, 0, TCP_ENDPOINT );
 				client->fd = accept(server->fd, (struct sockaddr*)&client->addr, &accept_addrlen);
 				set_nonblocking(client->fd);
 				ev.events = EPOLLIN;
