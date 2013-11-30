@@ -112,7 +112,7 @@ int main()
 				client = get_endpoint( NULL, 0, UDP_ENDPOINT );
 				int nbytes = recvfrom( kev[i].data.fd, buf, BUFSIZE, 0, (struct sockaddr*)&client->addr, &accept_addrlen );
 				sendto( kev[i].data.fd, buf, nbytes, 0, (struct sockaddr*)&client->addr, accept_addrlen );
-
+				perror("sendto");
 			}
 			/*
 			 * something happen about read, tcp is used only between server and client
