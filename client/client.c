@@ -18,7 +18,7 @@ int login( endpoint_t* server )
 
 int main()
 {
-	endpoint_t* server = get_endpoint( "23.227.187.13", 80, TCP_ENDPOINT );
+	endpoint_t* server = get_endpoint( "219.217.151.151", 80, TCP_ENDPOINT );
 	char sendbuf[BUFSIZE];
 	char recvbuf[BUFSIZE];
 	int nbytes;
