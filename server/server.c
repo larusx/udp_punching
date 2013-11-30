@@ -9,7 +9,7 @@
 #include <fcntl.h>
 
 #define EPOLL_NUM 1024
-#define BUFESIZE 1024
+#define BUFSIZE 1024
 
 typedef struct menu menu_t;
 struct menu{
@@ -24,20 +24,20 @@ menu_t server_menu[]={
 };
 void set_nonblocking(int fd)
 {
-	int opts;
-	opts = fcntl( fd, F_GETFL );
+	int opts = fcntl( fd, F_GETFL );
 	fcntl( fd, F_SETFL, opts|O_NONBLOCK);
 }
 /* 
  * if success return 0, otherwise return 1
  */
-int server_init( endpoint_t* server )
+int server_init( endpoint_t* server , int type )
 {
 	int on = 1;
 	setsockopt( server->fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(int) );
 	if( bind( server->fd, (struct sockaddr*)&server->addr, sockaddrlen ) !=0 )
 		{perror("bind");return 1;}
-	listen( server->fd, EPOLL_NUM );
+	if ( type == TCP_ENDPOINT )
+		listen( server->fd, EPOLL_NUM );
 	return 0;
 }
 /* 
@@ -45,7 +45,7 @@ int server_init( endpoint_t* server )
  */
 void welcome( endpoint_t* ep )
 {
-	char message[BUFESIZE];
+	char message[BUFSIZE];
 	int nbytes = sprintf(message,"Welcome! Your ID is %d\n",ep->fd);
 	for( int i = 0; server_menu[i].number != 0; i++ )
 	{
@@ -66,24 +66,31 @@ int main()
 
 	/*we should free this by ourself*/
 	endpoint_t* server = get_endpoint( NULL, 80, TCP_ENDPOINT );
+	endpoint_t* punch_service = get_endpoint( NULL, 80, UDP_ENDPOINT );
 	endpoint_t* client; 
 
-	if( server_init( server ) != 0 )
+	if( server_init( server, TCP_ENDPOINT ) != 0 )
+		{return 1;}
+	
+	if( server_init( punch_service, UDP_ENDPOINT ) != 0 )
 		{return 1;}
 
 	/*add listen_fd to epoll*/
 	ev.events = EPOLLIN;
 	ev.data.fd = server->fd;
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, server->fd, &ev);
+	/*add punch_service_fd to epoll*/
+	ev.events = EPOLLIN;
+	ev.data.fd = punch_service->fd;
+	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, punch_service->fd, &ev);
 	/* 
 	 * main loop
 	 */
-	while ( 1 )
-	{
+	while ( 1 ) {
 		nfds = epoll_wait(epoll_fd, kev, EPOLL_NUM, -1);
-		for(int i=0; i<nfds; i++)
-		{
+		for(int i=0; i<nfds; i++) {
 			/* 
+			 * TCP events below
 			 * something happen in listen_fd
 			 */
 			if( kev[i].data.fd == server->fd ) {
@@ -97,11 +104,21 @@ int main()
 				welcome(client);
 			}
 			/*
+			 * UDP events below
+			 * something happen in punch_service_fd
+			 */
+			else if( kev[i].data.fd == punch_service->fd ) {
+				char buf[BUFSIZE];
+				client = get_endpoint( NULL, 0, UDP_ENDPOINT );
+				int nbytes = recvfrom( kev[i].data.fd, buf, BUFSIZE, 0, (struct sockaddr*)&client->addr, &accept_addrlen );
+				sendto( kev[i].data.fd, buf, nbytes, 0, (struct sockaddr*)&client->addr, accept_addrlen );
+
+			}
+			/*
 			 * something happen about read, tcp is used only between server and client
 			 */
-			else if( kev[i].events & EPOLLIN ){
-				if( handle( kev[i].data.fd, accepted_fds_tree ) != 0 )
-				{
+			else if( kev[i].events & EPOLLIN ) {
+				if( handle( kev[i].data.fd, accepted_fds_tree ) != 0 ) {
 					int fd = kev[i].data.fd;
 					ev.data.fd = fd;
 					epoll_ctl( epoll_fd, EPOLL_CTL_DEL, fd, &ev );
