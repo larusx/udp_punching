@@ -53,8 +53,7 @@ int handle( int accepted_fd, tree_node_t* accepted_fds_tree )
 void handle_p2p( int fd, hash_slot_t** hash_table ) 
 {
 	char msg[BUFSIZE];
-	char name[10];
-	int socklen;
+	socklen_t socklen;
 	hash_slot_t* hash_ep;
 	endpoint_t* client = (endpoint_t*)malloc(sizeof(endpoint_t));
 	int len = recvfrom( fd, msg, BUFSIZE, 0, (struct sockaddr*)&client->addr, &socklen);
