@@ -4,8 +4,7 @@
 int main()
 {
 	int on=1;
-	endpoint_t* remote_endpoint = get_endpoint( "219.217.151.151", 80 ,UDP_ENDPOINT );
-	setsockopt(remote_endpoint->fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+	endpoint_t* remote_endpoint = get_endpoint( "127.0.0.1", 80 ,UDP_ENDPOINT );
 	char buf[1024] = "udp send test\n";
 	socklen_t addr_len = sockaddrlen;
 	sendto( remote_endpoint->fd, buf, 1024, 0 ,(struct sockaddr*)&remote_endpoint->addr, sockaddrlen);

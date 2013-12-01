@@ -1,7 +1,7 @@
 #ifndef _BASE_H
 #define _BASE_H
 /* 
- * base .h which every module will use
+ * base.h which every module will use
  */
 #include<stdio.h>
 #include<unistd.h>

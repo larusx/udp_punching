@@ -4,6 +4,7 @@
 #include "../base/base.h"
 #include "../base/punch.h"
 #include "../base/binary_tree.h"
+#include "../base/hash.h"
 #include "handle.h"
 #include <sys/epoll.h>
 #include <fcntl.h>
@@ -64,6 +65,9 @@ int main()
 	/*create a tree to manage the accepted_fds*/
 	tree_node_t* accepted_fds_tree = create_tree();
 
+	/*create a hash table to store p2p client*/
+	hash_slot_t** p2p_hash_table = hash_init();
+
 	/*we should free this by ourself*/
 	endpoint_t* server = get_endpoint( NULL, 80, TCP_ENDPOINT );
 	endpoint_t* punch_service = get_endpoint( NULL, 80, UDP_ENDPOINT );
@@ -108,11 +112,7 @@ int main()
 			 * something happen in punch_service_fd
 			 */
 			else if( kev[i].data.fd == punch_service->fd ) {
-				char buf[BUFSIZE];
-				client = get_endpoint( NULL, 0, UDP_ENDPOINT );
-				int nbytes = recvfrom( kev[i].data.fd, buf, BUFSIZE, 0, (struct sockaddr*)&client->addr, &accept_addrlen );
-				sendto( kev[i].data.fd, buf, nbytes, 0, (struct sockaddr*)&client->addr, accept_addrlen );
-				perror("sendto");
+				handle_p2p( kev[i].data.fd, p2p_hash_table ); 
 			}
 			/*
 			 * something happen about read, tcp is used only between server and client

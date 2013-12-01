@@ -19,6 +19,13 @@ enum{
 	UDP_ENDPOINT
 };
 
+/* used for p2p service */
+enum{
+	LOGIN,
+	FIND,
+	SEND,
+	LOGOUT
+};
 endpoint_t* get_endpoint( const char* ip, int port, int type );
 
 #endif
