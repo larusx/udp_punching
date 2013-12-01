@@ -34,12 +34,16 @@ void punch_handle_client (void)
 	printf("Please input your name (at most 10 characters) : ");
 	char sendbuf[BUFSIZE]; 
 	sendbuf[0] = LOGIN;
-	scanf("%s",&sendbuf[1]);
+	scanf("%s",&sendbuf[2]);
+	sendbuf[1] = strlen(&sendbuf[2]);
   handle_msg( server, sendbuf );
-	while ( 1 )
-	{
-		
-	}
+	sendbuf[0] = FIND;
+	sendbuf[1] = 0; 
+	handle_msg( server, sendbuf );
+	sendbuf[0] = LOGOUT;
+	scanf("%s",&sendbuf[2]);
+	sendbuf[1] = strlen(&sendbuf[2]);
+	handle_msg( server, sendbuf );
 }
 int main()
 {

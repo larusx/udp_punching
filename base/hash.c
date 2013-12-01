@@ -80,12 +80,12 @@ int hash_iter( hash_slot_t** table, char* buf )
 	for ( int i = 0; i < HASHSIZE; i++ ) {
 		iter = table[i];
 		while( iter != NULL ) {
-			memcpy( buf, iter->name, iter->len );
+			memcpy( &buf[nbytes], iter->name, iter->len );
 			nbytes += iter->len;
-			buf[++nbytes] = ' ';
+			buf[nbytes++] = ' ';
 			iter = iter->next;
 		}
 	}
 	buf[nbytes] = '\n';
-	return nbytes;
+	return nbytes+1;
 }
