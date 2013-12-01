@@ -21,7 +21,7 @@ enum{
 
 /* used for p2p service */
 enum{
-	LOGIN,
+	LOGIN = 1,
 	FIND,
 	SEND,
 	LOGOUT

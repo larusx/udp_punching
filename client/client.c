@@ -2,7 +2,9 @@
 
 #define BUFSIZE 1024
 
-char* p2p_server = "219.217.151.151";
+//char* p2p_server = "23.227.187.13";
+char* p2p_server = "127.0.0.1";
+
 socklen_t socklen = sockaddrlen;
 /* 
  * if success return 0, otherwise return 1
