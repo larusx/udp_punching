@@ -1,7 +1,14 @@
 #include "../base/punch.h"
+#include <pthread.h>
 
 #define BUFSIZE 1024
 
+menu_t p2p_menu[] = {
+	{ FIND, "Find who is online" },
+	{ SEND, "pick one user to send"},
+	{ LOGOUT, "Log out" },
+	{ 0, NULL }
+};
 //char* p2p_server = "23.227.187.13";
 char* p2p_server = "127.0.0.1";
 
@@ -26,24 +33,69 @@ void handle_msg( endpoint_t* remote, char* msg )
 	msg[len] = 0;
 	printf("%s",msg);
 }
+void* p2p_send_msg(void *arg)
+{
+	endpoint_t* remote = (endpoint_t*)arg;
+	char msg[BUFSIZE];
+
+	sendto( remote->fd, msg, strlen(msg), 0, (struct sockaddr*)&remote->addr, sockaddrlen);
+
+}
+void handle_p2p_client( endpoint_t* p2p_server, char* msg )
+{
+	pthread_t tid;
+	sendto( p2p_server->fd, msg, strlen(msg), 0, (struct sockaddr*)&p2p_server->addr, sockaddrlen);
+	int len = recvfrom( p2p_server->fd, msg, BUFSIZE, 0, (struct sockaddr*)&p2p_server->addr, &socklen);
+	endpoint_t remote;
+	memcpy( &remote, msg, sizeof(endpoint_t) );
+	remote.fd = socket( AF_INET, SOCK_DGRAM, 0 );
+	pthread_create( &tid, NULL, p2p_send_msg, (void*)&remote );
+	while ( 1 ) {
+		int len = recvfrom( remote.fd, msg, BUFSIZE, 0, (struct sockaddr*)&remote.addr, &socklen);
+		msg[len] = 0;
+		printf("%s",msg);
+	} 
+
+}
 void punch_handle_client (void)
 {
+	char name[20];
+	memset(name, 0, 20);
+	char sendbuf[BUFSIZE]; 
 	endpoint_t* server = get_endpoint( p2p_server, 80, UDP_ENDPOINT );
 	printf("========================\n");
 	printf("Now you are in p2p mode!\n");
 	printf("Please input your name (at most 10 characters) : ");
-	char sendbuf[BUFSIZE]; 
-	sendbuf[0] = LOGIN;
-	scanf("%s",&sendbuf[2]);
-	sendbuf[1] = strlen(&sendbuf[2]);
+	name[0] = LOGIN;
+	scanf("%s",&name[2]);
+	name[1] = strlen(&name[2]);
+	strcpy(sendbuf, name);
   handle_msg( server, sendbuf );
-	sendbuf[0] = FIND;
-	sendbuf[1] = 0; 
-	handle_msg( server, sendbuf );
-	sendbuf[0] = LOGOUT;
-	scanf("%s",&sendbuf[2]);
-	sendbuf[1] = strlen(&sendbuf[2]);
-	handle_msg( server, sendbuf );
+	for( int i = 0; p2p_menu[i].number  != 0; i++ ) {
+		printf("%d. %s\n", p2p_menu[i].number, p2p_menu[i].content);
+	}
+	while ( 1 ) {
+		scanf("%s",sendbuf);
+		switch( sendbuf[0]-'0' ) {
+			case FIND:
+				sendbuf[0] = FIND;
+				sendbuf[1] = 0; 
+				handle_msg( server, sendbuf );
+				break;
+			case SEND:
+				printf("input name: ");
+				memset(sendbuf, 0, BUFSIZE);
+				scanf("%s",&sendbuf[2]);
+				sendbuf[0] = SEND;
+				sendbuf[1] = strlen(&sendbuf[2]);
+				handle_p2p_client( server, sendbuf );
+				break;
+			case LOGOUT:
+				name[0] = LOGOUT;
+				handle_msg( server, name );
+				return;
+		}
+	}
 }
 int main()
 {

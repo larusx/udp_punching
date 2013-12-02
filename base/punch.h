@@ -5,8 +5,13 @@
 #define sockaddrlen (sizeof(struct sockaddr_in))
 
 
-typedef struct endpoint endpoint_t;
+typedef struct menu menu_t;
+struct menu{
+	int number;
+	char* content;
+};
 
+typedef struct endpoint endpoint_t;
 struct endpoint{
 	int fd;
 	struct sockaddr_in addr;

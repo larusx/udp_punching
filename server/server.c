@@ -12,11 +12,6 @@
 #define EPOLL_NUM 1024
 #define BUFSIZE 1024
 
-typedef struct menu menu_t;
-struct menu{
-	int number;
-	char* content;
-};
 menu_t server_menu[]={
 	{1,"Find who is online"},
 	{2,"Connect to someone"},
