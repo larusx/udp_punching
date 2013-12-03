@@ -48,7 +48,7 @@ void handle_p2p_client( endpoint_t* p2p_server, char* msg )
 {
 	pthread_t tid;
 	sendto( p2p_server->fd, msg, strlen(msg), 0, (struct sockaddr*)&p2p_server->addr, sockaddrlen);
-	int len = recvfrom( p2p_server->fd, msg, BUFSIZE, 0, (struct sockaddr*)&p2p_server->addr, &socklen);
+	recvfrom( p2p_server->fd, msg, BUFSIZE, 0, (struct sockaddr*)&p2p_server->addr, &socklen);
 	endpoint_t remote;
 	memcpy( &remote, msg, sizeof(endpoint_t) );
 	remote.fd = p2p_server->fd;/*share the same session with server*/

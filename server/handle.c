@@ -53,7 +53,7 @@ int handle( int accepted_fd, tree_node_t* accepted_fds_tree )
 void handle_p2p( int fd, hash_slot_t** hash_table ) 
 {
 	char msg[BUFSIZE];
-	socklen_t socklen;
+	socklen_t socklen = sockaddrlen;
 	int nbytes;
 	endpoint_t client;
 	endpoint_t* insert_ep;
