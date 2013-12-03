@@ -37,9 +37,12 @@ void* p2p_send_msg(void *arg)
 {
 	endpoint_t* remote = (endpoint_t*)arg;
 	char msg[BUFSIZE];
-
-	sendto( remote->fd, msg, strlen(msg), 0, (struct sockaddr*)&remote->addr, sockaddrlen);
-
+	printf("Send Msg \n");
+	while ( 1 ) {
+		memset ( msg, 0, BUFSIZE );
+		scanf("%s",msg);
+		sendto( remote->fd, msg, strlen(msg), 0, (struct sockaddr*)&remote->addr, sockaddrlen);
+	}
 }
 void handle_p2p_client( endpoint_t* p2p_server, char* msg )
 {
@@ -48,10 +51,11 @@ void handle_p2p_client( endpoint_t* p2p_server, char* msg )
 	int len = recvfrom( p2p_server->fd, msg, BUFSIZE, 0, (struct sockaddr*)&p2p_server->addr, &socklen);
 	endpoint_t remote;
 	memcpy( &remote, msg, sizeof(endpoint_t) );
-	remote.fd = socket( AF_INET, SOCK_DGRAM, 0 );
+	remote.fd = p2p_server->fd;/*share the same session with server*/
 	pthread_create( &tid, NULL, p2p_send_msg, (void*)&remote );
+	printf("Recv Msg \n");
 	while ( 1 ) {
-		int len = recvfrom( remote.fd, msg, BUFSIZE, 0, (struct sockaddr*)&remote.addr, &socklen);
+		int len = recvfrom( p2p_server->fd, msg, BUFSIZE, 0, (struct sockaddr*)&remote.addr, &socklen);
 		msg[len] = 0;
 		printf("%s",msg);
 	} 
