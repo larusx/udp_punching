@@ -81,6 +81,7 @@ int main()
 	/*add punch_service_fd to epoll*/
 	ev.events = EPOLLIN;
 	ev.data.fd = punch_service->fd;
+	set_nonblocking(punch_service->fd);
 	epoll_ctl(epoll_fd, EPOLL_CTL_ADD, punch_service->fd, &ev);
 	/* 
 	 * main loop
